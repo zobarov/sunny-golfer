@@ -7,7 +7,7 @@
 
 
 <ion-content>
-  <ion-slides page="true">
+  <ion-slides page="true" (swipe)="slideChanged($event)" (ionSlideDidChange)="slideChanged()">
       <ion-slide *ngFor="let holeNumber of numberOfHoles">
         <ion-row>
           <ion-col>
@@ -15,15 +15,22 @@
           </ion-col>
         </ion-row>
 
-    <ion-row *ngFor="let player of players">
+<!--ion-row *ngFor="let player of players">-->
+    <ion-row>
       <ion-col>
-        <ion-input type="number" placeholder="{{player}}" [(ngModel)]="playerResult"></ion-input>
+        <ion-input type="number" placeholder="{{players[0]}}" [(ngModel)]="holeResults[0]" (ngModelChange)="change(holeResultA, 0)"></ion-input>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col>
+        <ion-input type="number" placeholder="{{players[1]}}" [(ngModel)]="holeResults[1]" (ngModelChange)='change(holeResultB, 1)'></ion-input>
       </ion-col>
     </ion-row>
 
     <ion-row>
         <ion-col>
-        <button ion-button color="light" (click)="confirmHoleResult(holeNumber, playerResult)">Confirm</button>
+        <button ion-button color="light" (click)="confirmHoleResult(holeNumber, holeResultA, holeResultB)">Confirm</button>
       </ion-col>
     </ion-row>
 
