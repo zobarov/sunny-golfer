@@ -1,0 +1,38 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>Game</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content>
+  <ion-slides page="true">
+      <ion-slide *ngFor="let holeNumber of numberOfHoles">
+        <ion-row>
+          <ion-col>
+              Hole {{holeNumber}}
+          </ion-col>
+        </ion-row>
+
+    <ion-row *ngFor="let player of players">
+      <ion-col>
+        <ion-input type="number" placeholder="{{player}}" [(ngModel)]="playerResult"></ion-input>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+        <ion-col>
+        <button ion-button color="light" (click)="confirmHoleResult(holeNumber, playerResult)">Confirm</button>
+      </ion-col>
+    </ion-row>
+
+
+  </ion-slide>
+
+
+  </ion-slides>
+
+
+
+</ion-content>
