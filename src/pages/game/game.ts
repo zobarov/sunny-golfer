@@ -3,13 +3,8 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { ViewChild } from '@angular/core';
 import { Slides } from 'ionic-angular';
 
+import { GameFlowSrv } from '../../services/services';
 
-/**
- * Generated class for the Game page.
- *
- * See http://ionicframework.com/docs/components/#navigation for more info
- * on Ionic pages and navigation.
- */
 @IonicPage()
 @Component({
   selector: 'page-game',
@@ -25,12 +20,14 @@ export class GamePage {
 
   holeResults: any[];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController,
+              public navParams: NavParams,
+              public gameFlowSrv: GameFlowSrv) {
     //this.numberOfHoles =  Array(5).fill().map((x,i)=>i);
     this.currentHole = 1;
     this.numberOfHoles = Array(18).fill(this.currentHole).map((x,currentHole)=>currentHole+1);
     this.players = ['Vlad', 'Alex'];
-    this.holeResults = Array(2).fill(0);
+    this.holeResults =[];
 
   }
 
@@ -43,43 +40,55 @@ export class GamePage {
     console.log("Confirming hole result:", hole, holeResultA, holeResultB);
   }
 
-  change(holeResult, index) {
-    //console.log("Applying hole result:", holeResult, index);
-    this.holeResults[index] = holeResult;
-    console.log("Applying hole result:", this.holeResults);
-  }
-
-  changeB(holeResultB) {
-    this.holeResults[1] = holeResultB;
-  }
-
-
   slideChanged($event) {
-    if(this.holeResults[0] !== 0 && this.holeResults[1] !== 0) {
-      console.log("Unlocking swipe:");
+    if(this.holeResults[0] !== "" && this.holeResults[1] !== "") {
+      console.log("Unlocking swipe: Res:", this.holeResults[0], this.holeResults[1]);
       this.slides.lockSwipeToNext(false);
     } else {
       console.log("Re-lock swipe to next");
       return;
     }
 
+    let holeN = this.currentHole;
+    let slideNextHole = true;
 
     if($event.direction == 2) {
          console.log("sliding forward ", $event);
          this.currentHole += 1;
-
     } else if($event.direction == 4) {
          console.log("sliding back ", $event);
          this.currentHole -= 1;
+         slideNextHole = false;
     }
 
-    this.slides.slideNext();
+    this.gameFlowSrv.saveHoleScores(0, holeN, this.holeResults);
+    //sliding after save to avoid screen corruption:
+    if(slideNextHole) {
+      this.holeResults = [];
+      this.slides.slideNext();
+      this.slides.lockSwipeToNext(true);
+    } else {
+      let tempHoleRes: any;
+      this.getPrevValue(holeN).then(
+          value => {
+            console.log("Promise value", value);
+            this.holeResults = value;
+          }
+    );
 
-    this.holeResults = Array(2).fill(0);
-    this.slides.lockSwipeToNext(true);
+      //console.log("Fetched res for prev hole:", tempHoleRes);
+      //this.holeResults.join(tempHoleRes);
+      this.slides.slidePrev();
+    }
+    //this.slides.slideNext();
 
+  }
 
-
+  getPrevValue(holeN) : any {
+    return this.gameFlowSrv.fetchHoleScore(0, holeN - 1).then(data => {
+        var value =  JSON.parse(data);
+        return value.playerScores;
+      });
   }
 
 

@@ -7,7 +7,7 @@
 
 
 <ion-content>
-  <ion-slides page="true" (swipe)="slideChanged($event)" (ionSlideDidChange)="slideChanged()">
+  <ion-slides page="true" (swipe)="slideChanged($event)">
       <ion-slide *ngFor="let holeNumber of numberOfHoles">
         <ion-row>
           <ion-col>
@@ -18,13 +18,13 @@
 <!--ion-row *ngFor="let player of players">-->
     <ion-row>
       <ion-col>
-        <ion-input type="number" placeholder="{{players[0]}}" [(ngModel)]="holeResults[0]" (ngModelChange)="change(holeResultA, 0)"></ion-input>
+        <ion-input type="number" placeholder="{{players[0]}}" [(ngModel)]="holeResults['0']"></ion-input>
       </ion-col>
     </ion-row>
 
     <ion-row>
       <ion-col>
-        <ion-input type="number" placeholder="{{players[1]}}" [(ngModel)]="holeResults[1]" (ngModelChange)='change(holeResultB, 1)'></ion-input>
+        <ion-input type="number" placeholder="{{players[1]}}" [(ngModel)]="holeResults['1']"></ion-input>
       </ion-col>
     </ion-row>
 

@@ -10,6 +10,11 @@ import { GamePage } from '../pages/pages';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
+import { IonicStorageModule } from '@ionic/storage';
+import { Storage } from '@ionic/storage';
+
+import { GameFlowSrv } from '../services/services';
+
 @NgModule({
   declarations: [
     MyApp,
@@ -20,6 +25,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
+    IonicStorageModule.forRoot(),
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -31,6 +37,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
   providers: [
     StatusBar,
     SplashScreen,
+    GameFlowSrv,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })
