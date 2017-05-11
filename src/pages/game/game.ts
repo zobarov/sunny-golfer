@@ -3,7 +3,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { ViewChild } from '@angular/core';
 import { Slides } from 'ionic-angular';
 
-import { GameFlowSrv } from '../../services/services';
+import { GameFlowSrv, GameSetupSrv } from '../../services/services';
 
 @IonicPage()
 @Component({
@@ -17,79 +17,72 @@ export class GamePage {
   numberOfHoles: any[];
   players: any[];
   currentHole: any;
-
   holeResults: any[];
+
+  currentGameId : string;
+
 
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
-              public gameFlowSrv: GameFlowSrv) {
+              public gameFlowSrv: GameFlowSrv,
+              private gameSetupSrv: GameSetupSrv) {
     //this.numberOfHoles =  Array(5).fill().map((x,i)=>i);
     this.currentHole = 1;
     this.numberOfHoles = Array(18).fill(this.currentHole).map((x,currentHole)=>currentHole+1);
     this.players = ['Vlad', 'Alex'];
-    this.holeResults =[];
+    this.holeResults =["", ""];
 
+    this.currentGameId = gameSetupSrv.generateGameId();
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad Game: numberOfHoles=' , this.numberOfHoles);
     this.slides.lockSwipeToNext(true);
+    console.log("Game ID=", this.currentGameId);
   }
 
-  confirmHoleResult(hole, holeResultA, holeResultB) {
-    console.log("Confirming hole result:", hole, holeResultA, holeResultB);
+  isAvailableToGoNextHole() : boolean {
+    let warning = false;
+    if(this.holeResults[0] === "" || this.holeResults[0] === "0") {
+      warning = true;
+    }
+    if(this.holeResults[1] === "" || this.holeResults[1] === "0") {
+      warning = true;
+    }
+    //TODO: higlighting here:
+    return !warning;
   }
 
   slideChanged($event) {
-    if(this.holeResults[0] !== "" && this.holeResults[1] !== "") {
-      console.log("Unlocking swipe: Res:", this.holeResults[0], this.holeResults[1]);
-      this.slides.lockSwipeToNext(false);
-    } else {
-      console.log("Re-lock swipe to next");
-      return;
-    }
-
-    let holeN = this.currentHole;
     let slideNextHole = true;
-
-    if($event.direction == 2) {
-         console.log("sliding forward ", $event);
-         this.currentHole += 1;
-    } else if($event.direction == 4) {
-         console.log("sliding back ", $event);
-         this.currentHole -= 1;
-         slideNextHole = false;
-    }
-
-    this.gameFlowSrv.saveHoleScores(0, holeN, this.holeResults);
-    //sliding after save to avoid screen corruption:
-    if(slideNextHole) {
-      this.holeResults = [];
-      this.slides.slideNext();
-      this.slides.lockSwipeToNext(true);
-    } else {
-      let tempHoleRes: any;
-      this.getPrevValue(holeN).then(
-          value => {
-            console.log("Promise value", value);
-            this.holeResults = value;
+    if(this.isAvailableToGoNextHole()) {
+      this.slides.lockSwipeToNext(false);
+        if($event.direction == 2) {
+          if(this.currentHole == 18) {
+            return; //to prevent sliding fwd on the last hole
           }
-    );
-
-      //console.log("Fetched res for prev hole:", tempHoleRes);
-      //this.holeResults.join(tempHoleRes);
+          let nextHoleIsSet = this.gameFlowSrv.isHoleScoreExist(this.currentHole + 1);
+          let lockNext = false;
+          if(nextHoleIsSet) {
+              this.holeResults = this.gameFlowSrv.fetchOneHoleScore(this.currentHole + 1);
+          } else {
+              this.gameFlowSrv.saveOneHoleScore(this.currentHole, this.holeResults);
+              this.holeResults = ["", ""];
+              lockNext = true;
+          }
+          this.currentHole += 1;
+          this.slides.slideNext();
+          this.slides.lockSwipeToNext(lockNext);
+        }
+        return;
+    }
+    if($event.direction == 4) {
+      if(this.currentHole == 1) {
+        return; //to prevent sliding back on first hole
+      }
+      this.currentHole -= 1;
+      slideNextHole = false;
+      this.holeResults = this.gameFlowSrv.fetchOneHoleScore(this.currentHole);
       this.slides.slidePrev();
     }
-    //this.slides.slideNext();
-
   }
-
-  getPrevValue(holeN) : any {
-    return this.gameFlowSrv.fetchHoleScore(0, holeN - 1).then(data => {
-        var value =  JSON.parse(data);
-        return value.playerScores;
-      });
-  }
-
-
 }

@@ -13,7 +13,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { IonicStorageModule } from '@ionic/storage';
 import { Storage } from '@ionic/storage';
 
-import { GameFlowSrv } from '../services/services';
+import { GameFlowSrv, GameSetupSrv } from '../services/services';
 
 @NgModule({
   declarations: [
@@ -38,6 +38,7 @@ import { GameFlowSrv } from '../services/services';
     StatusBar,
     SplashScreen,
     GameFlowSrv,
+    GameSetupSrv,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })
