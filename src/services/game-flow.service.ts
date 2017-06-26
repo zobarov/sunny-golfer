@@ -5,22 +5,20 @@ import { Storage } from '@ionic/storage';
 @Injectable()
 export class GameFlowSrv {
   private storage : Storage;
-
+  private game: Game;
   private holeScoreArray: HoleResult [];
 
   constructor(storage: Storage) {
     this.storage = storage;
-    this.holeScoreArray = Array(18);
-    for(let i=0; i < this.holeScoreArray.length; i++) {
-      this.holeScoreArray[i] = new HoleResult();
-    }
-    console.log("holeScoreArray:", this.holeScoreArray);
+    this.game = new Game();
   }
 
   saveOneHoleScore(holeIndex: number, scores: string[]) : boolean {
     if(holeIndex < 1) {
       return false;
     }
+    //let holeRes = new HoleResult().build(holeIndex, scores);
+    //this.game.saveHole(holeIndex, scores);
     this.holeScoreArray[holeIndex - 1].update(scores);
     console.log("Saved score for hole:" + holeIndex + " is:", this.holeScoreArray[holeIndex - 1].scores());
     return true;
@@ -67,13 +65,38 @@ export class GameFlowSrv {
 
 }
 
+class Game {
+  private holeScoreArray: HoleResult [];
+
+  constructor() {
+    console.log("Initializing a game:");
+    this.holeScoreArray = Array(18);
+    for(let i=0; i < this.holeScoreArray.length; i++) {
+      this.holeScoreArray[i] = new HoleResult();
+    }
+  }
+
+  saveHole(holeIndex: number, scores: string[]) {
+    let hr = new HoleResult().build(holeIndex, scores);
+    //this.holeScoreArray[holeIndex].update(hr);
+
+  }
+
+}
+
 class HoleResult {
   private isFilled: boolean;
+  private holeNumber: number;
   private playersScore: string[];
 
   constructor() {
     this.isFilled = false;
     this.playersScore = ["", ""];
+  }
+
+  build(holeNum: number, scores: string[]) {
+    this.holeNumber = holeNum;
+    this.playersScore = scores;
   }
 
   update(scores: string[]) {
