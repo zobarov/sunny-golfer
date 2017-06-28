@@ -5,7 +5,7 @@ import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { ListPage } from '../pages/list/list';
-import { GamePage } from '../pages/pages';
+import { GamePage, GameLayout, GameTable } from '../pages/pages';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -20,7 +20,9 @@ import { GameFlowSrv, GameSetupSrv } from '../services/services';
     MyApp,
     HomePage,
     ListPage,
-    GamePage
+    GamePage,
+    GameLayout,
+    GameTable
   ],
   imports: [
     BrowserModule,
@@ -32,7 +34,9 @@ import { GameFlowSrv, GameSetupSrv } from '../services/services';
     MyApp,
     HomePage,
     ListPage,
-    GamePage
+    GamePage,
+    GameLayout,
+    GameTable
   ],
   providers: [
     StatusBar,

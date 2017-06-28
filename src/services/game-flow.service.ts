@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 //import { Http, Response} from '@angular/http';
 import { Storage } from '@ionic/storage';
+import { Game, HoleResult } from '../domain/Game';
 
 @Injectable()
 export class GameFlowSrv {
   private storage : Storage;
   private game: Game;
-  private holeScoreArray: HoleResult [];
+  //private holeScoreArray: HoleResult [];
 
   constructor(storage: Storage) {
     this.storage = storage;
@@ -17,10 +18,10 @@ export class GameFlowSrv {
     if(holeIndex < 1) {
       return false;
     }
-    //let holeRes = new HoleResult().build(holeIndex, scores);
-    //this.game.saveHole(holeIndex, scores);
-    this.holeScoreArray[holeIndex - 1].update(scores);
-    console.log("Saved score for hole:" + holeIndex + " is:", this.holeScoreArray[holeIndex - 1].scores());
+    //var holeRes = new HoleResult().build(holeIndex, scores);
+    this.game.saveHole(holeIndex -1, scores);
+    //this.holeScoreArray[holeIndex - 1].update(scores);
+    console.log("Saved score for hole:" + holeIndex + " is:", this.game.getScore(holeIndex - 1));
     return true;
   }
 
@@ -28,18 +29,14 @@ export class GameFlowSrv {
     if(holeIndex < 1) {
       return new HoleResult().scores();
     }
-    if(this.holeScoreArray[holeIndex - 1].isScoreSet()) {
-      return this.holeScoreArray[holeIndex - 1].scores();
-    } else {
-      return new HoleResult().scores();
-    }
+    return this.game.getScore(holeIndex - 1);
   }
 
   isHoleScoreExist(holeIndex : number) : boolean {
     if(holeIndex < 1) {
       return false;
     }
-    return this.holeScoreArray[holeIndex].isScoreSet();
+    return this.game.isScoreSet(holeIndex);
   }
 
   saveHoleScores(gameId, holeNumber, playerScores) {
@@ -65,50 +62,4 @@ export class GameFlowSrv {
 
 }
 
-class Game {
-  private holeScoreArray: HoleResult [];
 
-  constructor() {
-    console.log("Initializing a game:");
-    this.holeScoreArray = Array(18);
-    for(let i=0; i < this.holeScoreArray.length; i++) {
-      this.holeScoreArray[i] = new HoleResult();
-    }
-  }
-
-  saveHole(holeIndex: number, scores: string[]) {
-    let hr = new HoleResult().build(holeIndex, scores);
-    //this.holeScoreArray[holeIndex].update(hr);
-
-  }
-
-}
-
-class HoleResult {
-  private isFilled: boolean;
-  private holeNumber: number;
-  private playersScore: string[];
-
-  constructor() {
-    this.isFilled = false;
-    this.playersScore = ["", ""];
-  }
-
-  build(holeNum: number, scores: string[]) {
-    this.holeNumber = holeNum;
-    this.playersScore = scores;
-  }
-
-  update(scores: string[]) {
-    this.playersScore = scores;
-    this.isFilled = true;
-  }
-
-  isScoreSet() {
-    return this.isFilled;
-  }
-
-  scores() {
-    return this.playersScore;
-  }
-}

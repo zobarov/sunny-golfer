@@ -1,0 +1,55 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-title>GameTable</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-50 style="background-color: #e74c3c;">
+        <ion-list>
+          <ion-item-group *ngFor="let player of ['Alex', 'Vlad']">
+            <ion-item-divider>
+                {{player}}
+            </ion-item-divider>
+            <ion-item *ngFor="let hole of [1,2,3,4,5,6,7,8,9]">
+              <ion-col>
+                <ion-row>{{hole}}</ion-row>
+              </ion-col>
+            </ion-item>
+          </ion-item-group>
+        </ion-list>
+      </ion-col>
+
+      <ion-col col-50 style="background-color: #e57c3c;">
+        Seconds half
+
+
+        <ion-grid>
+              <ion-col>
+                  <ion-row>
+                    3 3
+                  </ion-row>
+
+              </ion-col>
+
+              <ion-col>
+                  <ion-row>
+                    4 4
+                  </ion-row>
+
+              </ion-col>
+
+          </ion-grid>
+      </ion-col>
+
+</ion-row>
+  </ion-grid>
+
+
+
+</ion-content>

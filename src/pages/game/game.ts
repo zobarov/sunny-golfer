@@ -75,7 +75,7 @@ export class GamePage {
         }
         return;
     }
-    if($event.direction == 4) {
+    /*if($event.direction == 4) {
       if(this.currentHole == 1) {
         return; //to prevent sliding back on first hole
       }
@@ -83,6 +83,6 @@ export class GamePage {
       slideNextHole = false;
       this.holeResults = this.gameFlowSrv.fetchOneHoleScore(this.currentHole);
       this.slides.slidePrev();
-    }
+    }*/
   }
 }
